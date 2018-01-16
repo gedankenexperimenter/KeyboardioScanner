@@ -4,26 +4,20 @@
 
 #include <Arduino.h>
 #include "twi/wire-protocol-constants.h"
+#include "Crgb.h"
 
 // See .cpp file for comments regarding appropriate namespaces
 namespace kaleidoscope {
 namespace hardware {
 
-// This ought to be defined elsewhere?
-struct cRGB {
-  uint8_t b;
-  uint8_t g;
-  uint8_t r;
-};
-
 #define LED_BANKS 4
 
 #define LEDS_PER_HAND 32
-#define LED_BYTES_PER_BANK sizeof(cRGB)  * LEDS_PER_HAND/LED_BANKS
+#define LED_BYTES_PER_BANK sizeof(Crgb)  * LEDS_PER_HAND/LED_BANKS
 
 // Should be defined in separate file, unless it's only used here
 union LEDData_t {
-  cRGB leds[LEDS_PER_HAND];
+  Crgb leds[LEDS_PER_HAND];
   byte bytes[LED_BANKS][LED_BYTES_PER_BANK];
 };
 
@@ -64,8 +58,8 @@ class KeyboardioScanner {
 
   bool moreKeysWaiting();
   void sendLEDData();
-  void setOneLEDTo(byte led, cRGB color);
-  void setAllLEDsTo(cRGB color);
+  void setOneLEDTo(byte led, Crgb color);
+  void setAllLEDsTo(Crgb color);
   keydata_t getKeyData();
   bool readKeys();
   LEDData_t ledData;
