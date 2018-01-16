@@ -32,9 +32,6 @@ const uint8_t PROGMEM gamma8[] = {
   215, 218, 220, 223, 225, 228, 231, 233, 236, 239, 241, 244, 247, 249, 252, 255
 };
 
-// What's the purpose of this destructor?
-KeyboardioScanner::~KeyboardioScanner() {}
-
 KeyboardioScanner::KeyboardioScanner(byte ad01) {
   ad01_ = ad01;
   addr_ = SCANNER_I2C_ADDR_BASE | ad01_;

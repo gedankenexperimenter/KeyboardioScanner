@@ -49,7 +49,6 @@ union keydata_t {
 class KeyboardioScanner {
  public:
   KeyboardioScanner(byte setAd01);
-  ~KeyboardioScanner();
 
   int readVersion();
 
