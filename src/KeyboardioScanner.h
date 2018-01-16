@@ -16,19 +16,6 @@ namespace hardware {
 #define LED_BYTES_PER_BANK sizeof(Crgb)  * LEDS_PER_HAND/LED_BANKS
 
 
-// Same datastructure as on the other side ­ other side of what?
-union key_t {
-  struct {
-    uint8_t row: 2,
-            col: 3,
-            keyState: 1,
-            keyEventsWaiting: 1,
-            eventReported: 1;
-  };
-  uint8_t val;
-};
-
-
 // again, should be defined elsewhere?
 union keydata_t {
   uint8_t rows[4];
