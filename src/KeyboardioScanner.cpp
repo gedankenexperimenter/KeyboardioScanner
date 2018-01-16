@@ -6,6 +6,10 @@ extern "C" {
 #include "twi/twi.h"
 }
 
+// I'm not sure "kaleidoscope" is the best namespace here. Maybe it should be "keyboardio"?
+namespace kaleidoscope {
+// Likewise, maybe this should be "scanner"?
+namespace hardware {
 
 #define SCANNER_I2C_ADDR_BASE 0x58
 #define ELEMENTS(arr)  (sizeof(arr) / sizeof((arr)[0]))
@@ -198,3 +202,6 @@ void KeyboardioScanner::setOneLEDTo(byte led, cRGB color) {
                    };
   uint8_t result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
 }
+
+} // namespace hardware {
+} // namespace kaleidoscope {

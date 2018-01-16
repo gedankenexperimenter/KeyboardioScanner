@@ -5,6 +5,10 @@
 #include <Arduino.h>
 #include "twi/wire-protocol-constants.h"
 
+// See .cpp file for comments regarding appropriate namespaces
+namespace kaleidoscope {
+namespace hardware {
+
 // This ought to be defined elsewhere?
 struct cRGB {
   uint8_t b;
@@ -77,3 +81,5 @@ class KeyboardioScanner {
   int readRegister(uint8_t cmd);
 };
 
+} // namespace hardware {
+} // namespace kaleidoscope {
