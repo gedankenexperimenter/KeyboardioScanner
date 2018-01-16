@@ -32,6 +32,8 @@ const uint8_t PROGMEM gamma8[] = {
   215, 218, 220, 223, 225, 228, 231, 233, 236, 239, 241, 244, 247, 249, 252, 255
 };
 
+
+// Constructor
 KeyboardioScanner::KeyboardioScanner(byte ad01) {
   ad01_ = ad01;
   addr_ = SCANNER_I2C_ADDR_BASE | ad01_;
@@ -43,10 +45,12 @@ KeyboardioScanner::KeyboardioScanner(byte ad01) {
   }
 }
 
+
 // Returns the relative controller addresss. The expected range is 0-3
 uint8_t KeyboardioScanner::controllerAddress() {
   return ad01;
 }
+
 
 // Sets the keyscan interval. We currently do three reads.
 // before declaring a key event debounced.
@@ -73,12 +77,11 @@ byte KeyboardioScanner::setKeyscanInterval(byte delay) {
 }
 
 
-
-
 // returns -1 on error, otherwise returns the scanner version integer
 int KeyboardioScanner::readVersion() {
   return readRegister(TWI_CMD_VERSION);
 }
+
 
 // returns -1 on error, otherwise returns the scanner keyscan interval
 int KeyboardioScanner::readKeyscanInterval() {
@@ -104,9 +107,8 @@ byte KeyboardioScanner::setLEDSPIFrequency(byte frequency) {
 }
 
 
-
+// I think this is getting data from keyswitches?
 int KeyboardioScanner::readRegister(uint8_t cmd) {
-
   byte return_value = 0;
 
   uint8_t data[] = {cmd};
@@ -126,7 +128,6 @@ int KeyboardioScanner::readRegister(uint8_t cmd) {
   } else {
     return -1;
   }
-
 }
 
 
@@ -136,9 +137,9 @@ bool KeyboardioScanner::moreKeysWaiting() {
   return key_ready_;
 }
 
+
 // gives information on the key that was just pressed or released.
 bool KeyboardioScanner::readKeys() {
-
   uint8_t rxBuffer[5];
 
   // perform blocking read into buffer
@@ -154,9 +155,11 @@ bool KeyboardioScanner::readKeys() {
   }
 }
 
+
 keydata_t KeyboardioScanner::getKeyData() {
   return key_data_;
 }
+
 
 void KeyboardioScanner::sendLEDData() {
   sendLEDBank(next_led_bank_++);
@@ -164,6 +167,7 @@ void KeyboardioScanner::sendLEDData() {
     next_led_bank_ = 0;
   }
 }
+
 
 void KeyboardioScanner::sendLEDBank(byte bank) {
   uint8_t data[LED_BYTES_PER_BANK + 1];
@@ -174,6 +178,7 @@ void KeyboardioScanner::sendLEDBank(byte bank) {
   uint8_t result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
 }
 
+
 void KeyboardioScanner::setAllLEDsTo(cRGB color) {
   uint8_t data[] = {TWI_CMD_LED_SET_ALL_TO,
                     pgm_read_byte(&gamma8[color.b]),
@@ -183,6 +188,7 @@ void KeyboardioScanner::setAllLEDsTo(cRGB color) {
   uint8_t result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
 }
 
+
 void KeyboardioScanner::setOneLEDTo(byte led, cRGB color) {
   uint8_t data[] = {TWI_CMD_LED_SET_ONE_TO,
                     led,
@@ -191,7 +197,4 @@ void KeyboardioScanner::setOneLEDTo(byte led, cRGB color) {
                     pgm_read_byte(&gamma8[color.r])
                    };
   uint8_t result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
-
 }
-
-
