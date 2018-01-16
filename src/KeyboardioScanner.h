@@ -69,11 +69,11 @@ class KeyboardioScanner {
   uint8_t controllerAddress();
 
  private:
-  int addr;
-  int ad01;
-  keydata_t keyData;
-  bool keyReady = false;
-  byte nextLEDBank = 0;
+  int addr_;
+  int ad01_;
+  keydata_t key_data_;
+  bool key_ready_ = false;
+  byte next_led_bank_ = 0;
   void sendLEDBank(byte bank);
   int readRegister(uint8_t cmd);
 };
