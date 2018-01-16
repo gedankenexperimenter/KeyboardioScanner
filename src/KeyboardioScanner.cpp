@@ -177,8 +177,6 @@ void KeyboardioScanner::sendLEDBank(byte bank) {
   uint8_t result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
 }
 
-
-
 void KeyboardioScanner::setAllLEDsTo(cRGB color) {
   uint8_t data[] = {TWI_CMD_LED_SET_ALL_TO,
                     pgm_read_byte(&gamma8[color.b]),
