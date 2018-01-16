@@ -1,3 +1,5 @@
+// -*- c++ -*-
+
 #pragma once
 
 #define TWI_CMD_NONE 0x00

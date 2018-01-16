@@ -1,3 +1,5 @@
+// -*- c++ -*-
+
 /*
   twi.h - TWI/I2C library for Wiring & Arduino
   Copyright (c) 2006 Nicholas Zambetti.  All right reserved.

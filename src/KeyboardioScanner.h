@@ -1,8 +1,11 @@
+// -*- c++ -*-
+
 #pragma once
 
 #include <Arduino.h>
 #include "wire-protocol-constants.h"
 
+// This ought to be defined elsewhere?
 struct cRGB {
   uint8_t b;
   uint8_t g;
@@ -14,6 +17,7 @@ struct cRGB {
 #define LEDS_PER_HAND 32
 #define LED_BYTES_PER_BANK sizeof(cRGB)  * LEDS_PER_HAND/LED_BANKS
 
+// These typedefs are confusing and unnecessary
 typedef union {
   cRGB leds[LEDS_PER_HAND];
   byte bytes[LED_BANKS][LED_BYTES_PER_BANK];
@@ -33,6 +37,7 @@ typedef union {
 } key_t;
 
 
+// another typedef ­ again, should be defined elsewhere?
 typedef union {
   uint8_t rows[4];
   uint32_t all;
