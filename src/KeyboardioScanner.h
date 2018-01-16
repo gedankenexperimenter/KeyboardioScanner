@@ -15,12 +15,6 @@ namespace hardware {
 #define LEDS_PER_HAND 32
 #define LED_BYTES_PER_BANK sizeof(Crgb)  * LEDS_PER_HAND/LED_BANKS
 
-// Should be defined in separate file, unless it's only used here
-union LEDData_t {
-  Crgb leds[LEDS_PER_HAND];
-  byte bytes[LED_BANKS][LED_BYTES_PER_BANK];
-};
-
 
 // Same datastructure as on the other side ­ other side of what?
 union key_t {
@@ -62,7 +56,7 @@ class KeyboardioScanner {
   void setAllLEDsTo(Crgb color);
   keydata_t getKeyData();
   bool readKeys();
-  LEDData_t ledData;
+  LedData led_data;
   uint8_t controllerAddress();
 
  private:

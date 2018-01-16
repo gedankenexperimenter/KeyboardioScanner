@@ -177,7 +177,7 @@ void KeyboardioScanner::sendLEDBank(byte bank) {
   uint8_t data[LED_BYTES_PER_BANK + 1];
   data[0]  = TWI_CMD_LED_BASE + bank;
   for (uint8_t i = 0 ; i < LED_BYTES_PER_BANK; i++) {
-    data[i + 1] = pgm_read_byte(&gamma8[ledData.bytes[bank][i]]);
+    data[i + 1] = pgm_read_byte(&gamma8[led_data.bytes[bank][i]]);
   }
   uint8_t result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
 }
