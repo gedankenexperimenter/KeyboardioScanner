@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include "KeyboardioScanner.h"
 
-// why extern "C"?
+// why extern "C"? Because twi.c is not C++!
 extern "C" {
-#include "twi.h"
+#include "twi/twi.h"
 }
 
 

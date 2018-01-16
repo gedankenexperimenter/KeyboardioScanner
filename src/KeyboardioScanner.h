@@ -3,7 +3,7 @@
 #pragma once
 
 #include <Arduino.h>
-#include "wire-protocol-constants.h"
+#include "twi/wire-protocol-constants.h"
 
 // This ought to be defined elsewhere?
 struct cRGB {
