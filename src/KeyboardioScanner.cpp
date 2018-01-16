@@ -160,7 +160,7 @@ bool KeyboardioScanner::readKeys() {
 }
 
 
-keydata_t KeyboardioScanner::getKeyData() {
+KeyData KeyboardioScanner::getKeyData() {
   return key_data_;
 }
 

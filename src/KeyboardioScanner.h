@@ -15,13 +15,6 @@ namespace hardware {
 #define LEDS_PER_HAND 32
 #define LED_BYTES_PER_BANK sizeof(Crgb)  * LEDS_PER_HAND/LED_BANKS
 
-
-// again, should be defined elsewhere?
-union keydata_t {
-  uint8_t rows[4];
-  uint32_t all;
-};
-
 // config options
 
 // used to configure interrupts, configuration for a particular controller
@@ -41,7 +34,7 @@ class KeyboardioScanner {
   void sendLEDData();
   void setOneLEDTo(byte led, Crgb color);
   void setAllLEDsTo(Crgb color);
-  keydata_t getKeyData();
+  KeyData getKeyData();
   bool readKeys();
   LedData led_data;
   uint8_t controllerAddress();
@@ -49,7 +42,7 @@ class KeyboardioScanner {
  private:
   int addr_;
   int ad01_;
-  keydata_t key_data_;
+  KeyData key_data_;
   bool key_ready_ = false;
   byte next_led_bank_ = 0;
   void sendLEDBank(byte bank);
