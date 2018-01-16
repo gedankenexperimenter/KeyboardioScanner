@@ -28,7 +28,7 @@ union LEDData_t {
 };
 
 
-// Same datastructure as on the other side
+// Same datastructure as on the other side ­ other side of what?
 union key_t {
   struct {
     uint8_t row: 2,
