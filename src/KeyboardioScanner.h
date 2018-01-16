@@ -17,15 +17,15 @@ struct cRGB {
 #define LEDS_PER_HAND 32
 #define LED_BYTES_PER_BANK sizeof(cRGB)  * LEDS_PER_HAND/LED_BANKS
 
-// These typedefs are confusing and unnecessary
-typedef union {
+// Should be defined in separate file, unless it's only used here
+union LEDData_t {
   cRGB leds[LEDS_PER_HAND];
   byte bytes[LED_BANKS][LED_BYTES_PER_BANK];
-} LEDData_t;
+};
 
 
 // Same datastructure as on the other side
-typedef union {
+union key_t {
   struct {
     uint8_t row: 2,
             col: 3,
@@ -34,14 +34,14 @@ typedef union {
             eventReported: 1;
   };
   uint8_t val;
-} key_t;
+};
 
 
-// another typedef ­ again, should be defined elsewhere?
-typedef union {
+// again, should be defined elsewhere?
+union keydata_t {
   uint8_t rows[4];
   uint32_t all;
-} keydata_t;
+};
 
 // config options
 
