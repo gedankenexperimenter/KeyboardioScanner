@@ -165,6 +165,8 @@ KeyData KeyboardioScanner::getKeyData() {
 }
 
 
+// I really don't like the way this function works, because of the side effect. It's even
+// worse because of the repeated calls in the Kaleidoscope-Hardware-* module.
 void KeyboardioScanner::sendLEDData() {
   sendLEDBank(next_led_bank_++);
   if (next_led_bank_ == LED_BANKS) {
@@ -173,6 +175,8 @@ void KeyboardioScanner::sendLEDData() {
 }
 
 
+// We seem to be using this function a lot, even when only one LED color has changed. I
+// doubt this is as efficient as we can reasonably make it.
 void KeyboardioScanner::sendLEDBank(byte bank) {
   uint8_t data[LED_BYTES_PER_BANK + 1];
   data[0]  = TWI_CMD_LED_BASE + bank;
