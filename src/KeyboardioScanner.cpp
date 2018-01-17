@@ -190,21 +190,21 @@ void KeyboardioScanner::sendLedBank(byte bank) {
 
 void KeyboardioScanner::setAllLedsTo(Color color) {
   byte data[] = {TWI_CMD_LED_SET_ALL_TO,
-                    pgm_read_byte(&gamma8[color.b]),
-                    pgm_read_byte(&gamma8[color.g]),
-                    pgm_read_byte(&gamma8[color.r])
-                   };
+                 pgm_read_byte(&gamma8[color.b]),
+                 pgm_read_byte(&gamma8[color.g]),
+                 pgm_read_byte(&gamma8[color.r])
+                };
   byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
 }
 
 
 void KeyboardioScanner::setOneLedTo(byte led, Color color) {
   byte data[] = {TWI_CMD_LED_SET_ONE_TO,
-                    led,
-                    pgm_read_byte(&gamma8[color.b]),
-                    pgm_read_byte(&gamma8[color.g]),
-                    pgm_read_byte(&gamma8[color.r])
-                   };
+                 led,
+                 pgm_read_byte(&gamma8[color.b]),
+                 pgm_read_byte(&gamma8[color.g]),
+                 pgm_read_byte(&gamma8[color.r])
+                };
   byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
 }
 

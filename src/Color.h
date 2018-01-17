@@ -25,7 +25,7 @@ struct Color {
   // produces smaller code. I'm also not sure about the constructor above; this is obtuse
   // C++ magic.
   constexpr Color(byte red, byte green, byte blue)
-      : r(red), g(green), b(blue) {}
+    : r(red), g(green), b(blue) {}
 };
 
 } // namespace hardware {
