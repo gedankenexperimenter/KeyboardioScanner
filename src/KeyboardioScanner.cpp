@@ -196,8 +196,8 @@ void KeyboardioScanner::setAllLedsTo(Color color) {
                 };
   byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
   // we should set all the values of led_data_ here
-  for (byte i = 0; i < TOTAL_LEDS; ++i) {
-    led_data_.leds[i] = color;
+  for (byte led = 0; led < TOTAL_LEDS; ++led) {
+    led_data_.leds[led] = color;
   }
 }
 

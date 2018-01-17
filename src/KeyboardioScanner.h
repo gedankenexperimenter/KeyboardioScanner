@@ -33,7 +33,9 @@ class KeyboardioScanner {
   bool moreKeysWaiting();
 
   // LED functions
-  Color getLedColor(byte i) { return led_data_.leds[i]; }
+  Color getLedColor(byte i) {
+    return led_data_.leds[i];
+  }
   void setLedColor(byte i, Color color) {
     led_data_.leds[i] = color;
   }
