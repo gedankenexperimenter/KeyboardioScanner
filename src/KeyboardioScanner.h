@@ -10,8 +10,8 @@
 namespace kaleidoscope {
 namespace hardware {
 
+// I want to rewrite the whole system of LED control; it's ugly
 #define LED_BANKS 4
-
 #define LEDS_PER_HAND 32
 #define LED_BYTES_PER_BANK sizeof(Color)  * LEDS_PER_HAND/LED_BANKS
 
@@ -37,7 +37,7 @@ class KeyboardioScanner {
   KeyData getKeyData();
   bool readKeys();
   LedData led_data;
-  uint8_t controllerAddress();
+  byte controllerAddress();
 
  private:
   int addr_;
@@ -46,7 +46,7 @@ class KeyboardioScanner {
   bool key_ready_ = false;
   byte next_led_bank_ = 0;
   void sendLEDBank(byte bank);
-  int readRegister(uint8_t cmd);
+  int readRegister(byte cmd);
 };
 
 } // namespace hardware {
