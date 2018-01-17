@@ -11,13 +11,14 @@ namespace kaleidoscope {
 // Likewise, maybe this should be "scanner"?
 namespace hardware {
 
+// Magic constant with no documentation...
 #define SCANNER_I2C_ADDR_BASE 0x58
 #define ELEMENTS(arr)  (sizeof(arr) / sizeof((arr)[0]))
 
 uint8_t twi_uninitialized = 1;
 
 // What's this array for?
-const uint8_t PROGMEM gamma8[] = {
+const byte PROGMEM gamma8[] = {
   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,
   1,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,
@@ -51,7 +52,7 @@ KeyboardioScanner::KeyboardioScanner(byte ad01) {
 
 
 // Returns the relative controller addresss. The expected range is 0-3
-uint8_t KeyboardioScanner::controllerAddress() {
+byte KeyboardioScanner::controllerAddress() {
   return ad01;
 }
 
@@ -74,8 +75,8 @@ uint8_t KeyboardioScanner::controllerAddress() {
 // returns the Wire.endTransmission code (0 = success)
 // https://www.arduino.cc/en/Reference/WireEndTransmission
 byte KeyboardioScanner::setKeyscanInterval(byte delay) {
-  uint8_t data[] = {TWI_CMD_KEYSCAN_INTERVAL, delay};
-  uint8_t result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
+  byte data[] = {TWI_CMD_KEYSCAN_INTERVAL, delay};
+  byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
 
   return result;
 }
@@ -94,7 +95,7 @@ int KeyboardioScanner::readKeyscanInterval() {
 
 
 // returns -1 on error, otherwise returns the LED SPI Frequncy
-int KeyboardioScanner::readLEDSPIFrequency() {
+int KeyboardioScanner::readLedSpiFrequency() {
   return readRegister(TWI_CMD_LED_SPI_FREQUENCY);
 }
 
@@ -103,30 +104,30 @@ int KeyboardioScanner::readLEDSPIFrequency() {
 //
 // returns the Wire.endTransmission code (0 = success)
 // https://www.arduino.cc/en/Reference/WireEndTransmission
-byte KeyboardioScanner::setLEDSPIFrequency(byte frequency) {
-  uint8_t data[] = {TWI_CMD_LED_SPI_FREQUENCY, frequency};
-  uint8_t result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
+byte KeyboardioScanner::setLedSpiFrequency(byte frequency) {
+  byte data[] = {TWI_CMD_LED_SPI_FREQUENCY, frequency};
+  byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
 
   return result;
 }
 
 
 // I think this is getting data from keyswitches?
-int KeyboardioScanner::readRegister(uint8_t cmd) {
+int KeyboardioScanner::readRegister(byte cmd) {
   byte return_value = 0;
 
-  uint8_t data[] = {cmd};
-  uint8_t result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
+  byte data[] = {cmd};
+  byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
 
   delayMicroseconds(15); // We may be able to drop this in the future
   // but will need to verify with correctly
   // sized pull-ups on both the left and right
   // hands' i2c SDA and SCL lines
 
-  uint8_t rxBuffer[1];
+  byte rxBuffer[1];
 
   // perform blocking read into buffer
-  uint8_t read = twi_readFrom(addr_, rxBuffer, ELEMENTS(rxBuffer), true);
+  byte read = twi_readFrom(addr_, rxBuffer, ELEMENTS(rxBuffer), true);
   if (read > 0) {
     return rxBuffer[0];
   } else {
@@ -144,10 +145,10 @@ bool KeyboardioScanner::moreKeysWaiting() {
 
 // gives information on the key that was just pressed or released.
 bool KeyboardioScanner::readKeys() {
-  uint8_t rxBuffer[5];
+  byte rxBuffer[5];
 
   // perform blocking read into buffer
-  uint8_t read = twi_readFrom(addr_, rxBuffer, ELEMENTS(rxBuffer), true);
+  byte read = twi_readFrom(addr_, rxBuffer, ELEMENTS(rxBuffer), true);
   if (rxBuffer[0] == TWI_REPLY_KEYDATA) {
     key_data_.rows[0] = rxBuffer[1];
     key_data_.rows[1] = rxBuffer[2];
@@ -178,33 +179,33 @@ void KeyboardioScanner::sendLEDData() {
 // We seem to be using this function a lot, even when only one LED color has changed. I
 // doubt this is as efficient as we can reasonably make it.
 void KeyboardioScanner::sendLEDBank(byte bank) {
-  uint8_t data[LED_BYTES_PER_BANK + 1];
+  byte data[LED_BYTES_PER_BANK + 1];
   data[0]  = TWI_CMD_LED_BASE + bank;
-  for (uint8_t i = 0 ; i < LED_BYTES_PER_BANK; i++) {
+  for (byte i = 0 ; i < LED_BYTES_PER_BANK; i++) {
     data[i + 1] = pgm_read_byte(&gamma8[led_data.bytes[bank][i]]);
   }
-  uint8_t result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
+  byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
 }
 
 
 void KeyboardioScanner::setAllLEDsTo(Color color) {
-  uint8_t data[] = {TWI_CMD_LED_SET_ALL_TO,
+  byte data[] = {TWI_CMD_LED_SET_ALL_TO,
                     pgm_read_byte(&gamma8[color.b]),
                     pgm_read_byte(&gamma8[color.g]),
                     pgm_read_byte(&gamma8[color.r])
                    };
-  uint8_t result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
+  byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
 }
 
 
 void KeyboardioScanner::setOneLEDTo(byte led, Color color) {
-  uint8_t data[] = {TWI_CMD_LED_SET_ONE_TO,
+  byte data[] = {TWI_CMD_LED_SET_ONE_TO,
                     led,
                     pgm_read_byte(&gamma8[color.b]),
                     pgm_read_byte(&gamma8[color.g]),
                     pgm_read_byte(&gamma8[color.r])
                    };
-  uint8_t result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
+  byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
 }
 
 } // namespace hardware {
