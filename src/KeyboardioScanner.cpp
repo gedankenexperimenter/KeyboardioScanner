@@ -166,28 +166,28 @@ KeyData KeyboardioScanner::getKeyData() {
 }
 
 
-// I really don't like the way this function works, because of the side effect. It's even
-// worse because of the repeated calls in the Kaleidoscope-Hardware-* module.
-void KeyboardioScanner::sendLedData() {
-  sendLEDBank(next_led_bank_++);
+// This function gets called to set led status on one bank (eight LEDs) at a time. Each
+// time it's called, it updates the next bank. I'm renaming it to be more clear.
+void KeyboardioScanner::updateNextLedBank() {
+  sendLedBank(next_led_bank_++);
   if (next_led_bank_ == LED_BANKS) {
     next_led_bank_ = 0;
   }
 }
 
 
-// We seem to be using this function a lot, even when only one LED color has changed. I
-// doubt this is as efficient as we can reasonably make it.
-void KeyboardioScanner::sendLedBank(byte bank) {
+// This function is private, and only gets called by updateNextLedBank() (see above)
+void KeyboardioScanner::updateLedBank(byte bank) {
   byte data[LED_BYTES_PER_BANK + 1];
-  data[0]  = TWI_CMD_LED_BASE + bank;
+  data[0] = TWI_CMD_LED_BASE + bank;
   for (byte i = 0 ; i < LED_BYTES_PER_BANK; i++) {
-    data[i + 1] = pgm_read_byte(&gamma8[led_data.bytes[bank][i]]);
+    data[i + 1] = pgm_read_byte(&gamma8[led_data_.bytes[bank][i]]);
   }
   byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
 }
 
 
+// An efficient way to set all LEDs to the same color at once
 void KeyboardioScanner::setAllLedsTo(Color color) {
   byte data[] = {TWI_CMD_LED_SET_ALL_TO,
                  pgm_read_byte(&gamma8[color.b]),
@@ -195,9 +195,14 @@ void KeyboardioScanner::setAllLedsTo(Color color) {
                  pgm_read_byte(&gamma8[color.r])
                 };
   byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
+  // we should set all the values of led_data_ here
+  for (byte i = 0; i < TOTAL_LEDS; ++i) {
+    led_data_.leds[i] = color;
+  }
 }
 
 
+// An efficient way to set the value of just one LED, without having to update everything
 void KeyboardioScanner::setOneLedTo(byte led, Color color) {
   byte data[] = {TWI_CMD_LED_SET_ONE_TO,
                  led,
@@ -206,6 +211,7 @@ void KeyboardioScanner::setOneLedTo(byte led, Color color) {
                  pgm_read_byte(&gamma8[color.r])
                 };
   byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
+  led_data_.leds[led] = color;
 }
 
 } // namespace hardware {

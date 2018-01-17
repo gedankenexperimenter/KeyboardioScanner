@@ -31,22 +31,33 @@ class KeyboardioScanner {
   int readLedSpiFrequency();
 
   bool moreKeysWaiting();
-  void sendLedData();
+
+  // LED functions
+  Color getLedColor(byte i) { return led_data_.leds[i]; }
+  void setLedColor(byte i, Color color) {
+    led_data_.leds[i] = color;
+  }
+  void updateNextLedBank();
   void setOneLedTo(byte led, Color color);
   void setAllLedsTo(Color color);
+
+
+
   KeyData getKeyData();
   bool readKeys();
-  LedData led_data;
   byte controllerAddress();
 
  private:
   int addr_;
   int ad01_;
+
   KeyData key_data_;
   bool key_ready_ = false;
+  int readRegister(byte cmd);
+
+  LedData led_data_;
   byte next_led_bank_ = 0;
   void sendLedBank(byte bank);
-  int readRegister(byte cmd);
 };
 
 } // namespace hardware {
