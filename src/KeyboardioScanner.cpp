@@ -42,9 +42,6 @@ const byte PROGMEM gamma8[] = {
 KeyboardioScanner::KeyboardioScanner(byte ad01) {
   ad01_ = ad01;
   addr_ = SCANNER_I2C_ADDR_BASE | ad01_;
-  // key_ready_ will be true after a read when there's another key event
-  // already waiting for us
-  key_ready_ = false;
   if (twi_uninitialized--) {
     twi_init();
   }
@@ -133,13 +130,6 @@ int KeyboardioScanner::readRegister(byte cmd) {
   } else {
     return -1;
   }
-}
-
-
-// returns the raw key code from the controller, or -1 on failure.
-// returns true of a key is ready to be read
-bool KeyboardioScanner::moreKeysWaiting() {
-  return key_ready_;
 }
 
 

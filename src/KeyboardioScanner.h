@@ -30,8 +30,6 @@ class KeyboardioScanner {
   byte setLedSpiFrequency(byte frequency);
   int readLedSpiFrequency();
 
-  bool moreKeysWaiting();
-
   // LED functions
   Color getLedColor(byte i) {
     return led_data_.leds[i];
@@ -43,8 +41,6 @@ class KeyboardioScanner {
   void setOneLedTo(byte led, Color color);
   void setAllLedsTo(Color color);
 
-
-
   KeyData getKeyData();
   bool readKeys();
   byte controllerAddress();
@@ -54,7 +50,6 @@ class KeyboardioScanner {
   int ad01_;
 
   KeyData key_data_;
-  bool key_ready_ = false;
   int readRegister(byte cmd);
 
   LedData led_data_;
