@@ -22,7 +22,8 @@ class KeyboardioScanner {
  public:
   KeyboardioScanner(byte setAd01);
 
-  int readVersion();
+  // only here for debugging, I think; it's unused in firmware
+  //int readVersion();
 
   byte setKeyscanInterval(byte delay);
   int readKeyscanInterval();

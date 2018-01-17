@@ -79,10 +79,11 @@ byte KeyboardioScanner::setKeyscanInterval(byte delay) {
 }
 
 
-// returns -1 on error, otherwise returns the scanner version integer
-int KeyboardioScanner::readVersion() {
-  return readRegister(TWI_CMD_VERSION);
-}
+// This seems to be here only for debugging purposes, and can probably be removed
+// // returns -1 on error, otherwise returns the scanner version integer
+// int KeyboardioScanner::readVersion() {
+//   return readRegister(TWI_CMD_VERSION);
+// }
 
 
 // returns -1 on error, otherwise returns the scanner keyscan interval
