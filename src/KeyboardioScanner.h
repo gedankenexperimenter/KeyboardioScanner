@@ -27,13 +27,13 @@ class KeyboardioScanner {
   byte setKeyscanInterval(byte delay);
   int readKeyscanInterval();
 
-  byte setLEDSPIFrequency(byte frequency);
-  int readLEDSPIFrequency();
+  byte setLedSpiFrequency(byte frequency);
+  int readLedSpiFrequency();
 
   bool moreKeysWaiting();
-  void sendLEDData();
-  void setOneLEDTo(byte led, Color color);
-  void setAllLEDsTo(Color color);
+  void sendLedData();
+  void setOneLedTo(byte led, Color color);
+  void setAllLedsTo(Color color);
   KeyData getKeyData();
   bool readKeys();
   LedData led_data;
@@ -45,7 +45,7 @@ class KeyboardioScanner {
   KeyData key_data_;
   bool key_ready_ = false;
   byte next_led_bank_ = 0;
-  void sendLEDBank(byte bank);
+  void sendLedBank(byte bank);
   int readRegister(byte cmd);
 };
 

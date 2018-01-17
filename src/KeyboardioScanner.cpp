@@ -168,7 +168,7 @@ KeyData KeyboardioScanner::getKeyData() {
 
 // I really don't like the way this function works, because of the side effect. It's even
 // worse because of the repeated calls in the Kaleidoscope-Hardware-* module.
-void KeyboardioScanner::sendLEDData() {
+void KeyboardioScanner::sendLedData() {
   sendLEDBank(next_led_bank_++);
   if (next_led_bank_ == LED_BANKS) {
     next_led_bank_ = 0;
@@ -178,7 +178,7 @@ void KeyboardioScanner::sendLEDData() {
 
 // We seem to be using this function a lot, even when only one LED color has changed. I
 // doubt this is as efficient as we can reasonably make it.
-void KeyboardioScanner::sendLEDBank(byte bank) {
+void KeyboardioScanner::sendLedBank(byte bank) {
   byte data[LED_BYTES_PER_BANK + 1];
   data[0]  = TWI_CMD_LED_BASE + bank;
   for (byte i = 0 ; i < LED_BYTES_PER_BANK; i++) {
@@ -188,7 +188,7 @@ void KeyboardioScanner::sendLEDBank(byte bank) {
 }
 
 
-void KeyboardioScanner::setAllLEDsTo(Color color) {
+void KeyboardioScanner::setAllLedsTo(Color color) {
   byte data[] = {TWI_CMD_LED_SET_ALL_TO,
                     pgm_read_byte(&gamma8[color.b]),
                     pgm_read_byte(&gamma8[color.g]),
@@ -198,7 +198,7 @@ void KeyboardioScanner::setAllLEDsTo(Color color) {
 }
 
 
-void KeyboardioScanner::setOneLEDTo(byte led, Color color) {
+void KeyboardioScanner::setOneLedTo(byte led, Color color) {
   byte data[] = {TWI_CMD_LED_SET_ONE_TO,
                     led,
                     pgm_read_byte(&gamma8[color.b]),
