@@ -6,7 +6,7 @@ namespace kaleidoscope {
 namespace hardware {
 
 union LedData {
-  Crgb leds[LEDS_PER_HAND];
+  Color leds[LEDS_PER_HAND];
   byte bytes[LED_BANKS][LED_BYTES_PER_BANK];
 };
 

@@ -183,7 +183,7 @@ void KeyboardioScanner::sendLEDBank(byte bank) {
 }
 
 
-void KeyboardioScanner::setAllLEDsTo(Crgb color) {
+void KeyboardioScanner::setAllLEDsTo(Color color) {
   uint8_t data[] = {TWI_CMD_LED_SET_ALL_TO,
                     pgm_read_byte(&gamma8[color.b]),
                     pgm_read_byte(&gamma8[color.g]),
@@ -193,7 +193,7 @@ void KeyboardioScanner::setAllLEDsTo(Crgb color) {
 }
 
 
-void KeyboardioScanner::setOneLEDTo(byte led, Crgb color) {
+void KeyboardioScanner::setOneLEDTo(byte led, Color color) {
   uint8_t data[] = {TWI_CMD_LED_SET_ONE_TO,
                     led,
                     pgm_read_byte(&gamma8[color.b]),
