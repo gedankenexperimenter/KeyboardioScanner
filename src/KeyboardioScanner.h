@@ -39,8 +39,8 @@ class KeyboardioScanner {
     led_data_.leds[i] = color;
   }
   void updateNextLedBank();
-  void setOneLedTo(byte led, Color color);
-  void setAllLedsTo(Color color);
+  void updateLed(byte led, Color color);
+  void updateAllLeds(Color color);
 
   KeyData getKeyData();
   bool readKeys();

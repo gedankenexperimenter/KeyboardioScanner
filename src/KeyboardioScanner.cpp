@@ -179,7 +179,7 @@ void KeyboardioScanner::updateLedBank(byte bank) {
 
 
 // An efficient way to set all LEDs to the same color at once
-void KeyboardioScanner::setAllLedsTo(Color color) {
+void KeyboardioScanner::updateAllLeds(Color color) {
   byte data[] = {TWI_CMD_LED_SET_ALL_TO,
                  pgm_read_byte(&gamma8[color.b]),
                  pgm_read_byte(&gamma8[color.g]),
@@ -194,7 +194,7 @@ void KeyboardioScanner::setAllLedsTo(Color color) {
 
 
 // An efficient way to set the value of just one LED, without having to update everything
-void KeyboardioScanner::setOneLedTo(byte led, Color color) {
+void KeyboardioScanner::updateLed(byte led, Color color) {
   byte data[] = {TWI_CMD_LED_SET_ONE_TO,
                  led,
                  pgm_read_byte(&gamma8[color.b]),
