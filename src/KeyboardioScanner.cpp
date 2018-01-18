@@ -153,11 +153,6 @@ bool KeyboardioScanner::readKeys() {
 }
 
 
-KeyData KeyboardioScanner::getKeyData() {
-  return key_data_;
-}
-
-
 // This function gets called to set led status on one bank (eight LEDs) at a time. Each
 // time it's called, it updates the next bank. I'm renaming it to be more clear.
 void KeyboardioScanner::updateNextLedBank() {
