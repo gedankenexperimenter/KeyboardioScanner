@@ -79,35 +79,36 @@ byte KeyboardioScanner::setKeyscanInterval(byte delay) {
 }
 
 
-// This seems to be here only for debugging purposes, and can probably be removed
+// These functions seem to be here only for debugging purposes, and can probably be removed
+
 // // returns -1 on error, otherwise returns the scanner version integer
 // int KeyboardioScanner::readVersion() {
 //   return readRegister(TWI_CMD_VERSION);
 // }
 
+// // returns -1 on error, otherwise returns the scanner keyscan interval
+// int KeyboardioScanner::readKeyscanInterval() {
+//   return readRegister(TWI_CMD_KEYSCAN_INTERVAL);
+// }
 
-// returns -1 on error, otherwise returns the scanner keyscan interval
-int KeyboardioScanner::readKeyscanInterval() {
-  return readRegister(TWI_CMD_KEYSCAN_INTERVAL);
-}
+// // returns -1 on error, otherwise returns the LED SPI Frequncy
+// int KeyboardioScanner::readLedSpiFrequency() {
+//   return readRegister(TWI_CMD_LED_SPI_FREQUENCY);
+// }
 
+// The only thing that uses this right now is the RainbowWave plugin
 
-// returns -1 on error, otherwise returns the LED SPI Frequncy
-int KeyboardioScanner::readLedSpiFrequency() {
-  return readRegister(TWI_CMD_LED_SPI_FREQUENCY);
-}
+// // Set the LED SPI Frequency. See wire-protocol-constants.h for
+// // values.
+// //
+// // returns the Wire.endTransmission code (0 = success)
+// // https://www.arduino.cc/en/Reference/WireEndTransmission
+// byte KeyboardioScanner::setLedSpiFrequency(byte frequency) {
+//   byte data[] = {TWI_CMD_LED_SPI_FREQUENCY, frequency};
+//   byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
 
-// Set the LED SPI Frequency. See wire-protocol-constants.h for
-// values.
-//
-// returns the Wire.endTransmission code (0 = success)
-// https://www.arduino.cc/en/Reference/WireEndTransmission
-byte KeyboardioScanner::setLedSpiFrequency(byte frequency) {
-  byte data[] = {TWI_CMD_LED_SPI_FREQUENCY, frequency};
-  byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
-
-  return result;
-}
+//   return result;
+// }
 
 
 // I think this is getting data from keyswitches?
@@ -122,12 +123,12 @@ int KeyboardioScanner::readRegister(byte cmd) {
   // sized pull-ups on both the left and right
   // hands' i2c SDA and SCL lines
 
-  byte rxBuffer[1];
+  byte rx_buffer[1];
 
   // perform blocking read into buffer
-  byte read = twi_readFrom(addr_, rxBuffer, ELEMENTS(rxBuffer), true);
+  byte read = twi_readFrom(addr_, rx_buffer, ELEMENTS(rx_buffer), true);
   if (read > 0) {
-    return rxBuffer[0];
+    return rx_buffer[0];
   } else {
     return -1;
   }
@@ -136,15 +137,15 @@ int KeyboardioScanner::readRegister(byte cmd) {
 
 // gives information on the key that was just pressed or released.
 bool KeyboardioScanner::readKeys() {
-  byte rxBuffer[5];
+  byte rx_buffer[5];
 
   // perform blocking read into buffer
-  byte read = twi_readFrom(addr_, rxBuffer, ELEMENTS(rxBuffer), true);
-  if (rxBuffer[0] == TWI_REPLY_KEYDATA) {
-    key_data_.rows[0] = rxBuffer[1];
-    key_data_.rows[1] = rxBuffer[2];
-    key_data_.rows[2] = rxBuffer[3];
-    key_data_.rows[3] = rxBuffer[4];
+  byte read = twi_readFrom(addr_, rx_buffer, ELEMENTS(rx_buffer), true);
+  if (rx_buffer[0] == TWI_REPLY_KEYDATA) {
+    key_data_.rows[0] = rx_buffer[1];
+    key_data_.rows[1] = rx_buffer[2];
+    key_data_.rows[2] = rx_buffer[3];
+    key_data_.rows[3] = rx_buffer[4];
     return true;
   } else {
     return false;

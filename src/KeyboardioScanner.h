@@ -26,10 +26,10 @@ class KeyboardioScanner {
   //int readVersion();
 
   byte setKeyscanInterval(byte delay);
-  int readKeyscanInterval();
+  //int readKeyscanInterval();
 
-  byte setLedSpiFrequency(byte frequency);
-  int readLedSpiFrequency();
+  //byte setLedSpiFrequency(byte frequency);
+  //int readLedSpiFrequency();
 
   // LED functions
   Color getLedColor(byte i) {
