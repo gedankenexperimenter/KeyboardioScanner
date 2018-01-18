@@ -15,6 +15,7 @@ namespace hardware {
 // I want to rewrite the whole system of LED control; it's ugly
 #define LED_BANKS 4
 #define LEDS_PER_HAND 32
+#define LEDS_PER_BANK (LEDS_PER_HAND / LED_BANKS)
 #define LED_BYTES_PER_BANK sizeof(Color)  * LEDS_PER_HAND/LED_BANKS
 
 // config options
@@ -34,12 +35,8 @@ class KeyboardioScanner {
   //int readLedSpiFrequency();
 
   // LED functions
-  Color getLedColor(byte i) {
-    return led_data_.leds[i];
-  }
-  void setLedColor(byte i, Color color) {
-    led_data_.leds[i] = color;
-  }
+  Color getLedColor(byte i);
+  void setLedColor(byte i, Color color);
   void updateNextLedBank();
   void updateLed(byte led, Color color);
   void updateAllLeds(Color color);
@@ -59,7 +56,8 @@ class KeyboardioScanner {
 
   LedData led_data_;
   byte next_led_bank_ = 0;
-  void sendLedBank(byte bank);
+  byte led_banks_changed_ = 0;
+  void updateLedBank(byte bank);
 };
 
 } // namespace hardware {

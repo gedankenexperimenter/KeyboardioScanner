@@ -153,10 +153,25 @@ bool KeyboardioScanner::readKeys() {
 }
 
 
+Color getLedColor(byte led) {
+  //assert(led < LEDS_PER_HAND);
+  return led_data_.leds[led];
+}
+
+void setLedColor(byte led, Color color) {
+  //assert(led < LEDS_PER_HAND);
+  if (led_data_.leds[led] != color) {
+    led_data_.leds[led] = color;
+    byte bank = led / LEDS_PER_BANK;
+    bitSet(led_banks_changed_, bank);
+  }
+}
+
+
 // This function gets called to set led status on one bank (eight LEDs) at a time. Each
 // time it's called, it updates the next bank. I'm renaming it to be more clear.
 void KeyboardioScanner::updateNextLedBank() {
-  sendLedBank(next_led_bank_++);
+  updateLedBank(next_led_bank_++);
   if (next_led_bank_ == LED_BANKS) {
     next_led_bank_ = 0;
   }
@@ -165,12 +180,15 @@ void KeyboardioScanner::updateNextLedBank() {
 
 // This function is private, and only gets called by updateNextLedBank() (see above)
 void KeyboardioScanner::updateLedBank(byte bank) {
+  if (! bitRead(led_banks_changed_, bank))
+    return;
   byte data[LED_BYTES_PER_BANK + 1];
   data[0] = TWI_CMD_LED_BASE + bank;
   for (byte i = 0 ; i < LED_BYTES_PER_BANK; i++) {
     data[i + 1] = pgm_read_byte(&gamma8[led_data_.bytes[bank][i]]);
   }
   byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
+  bitClear(led_banks_changed_, bank);
 }
 
 
@@ -199,6 +217,7 @@ void KeyboardioScanner::updateAllLeds(Color color) {
   for (byte led = 0; led < TOTAL_LEDS; ++led) {
     led_data_.leds[led] = color;
   }
+  led_banks_changed_ = 0;
 }
 
 } // namespace hardware {
