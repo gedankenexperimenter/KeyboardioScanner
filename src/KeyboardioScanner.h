@@ -5,6 +5,8 @@
 #include <Arduino.h>
 #include "twi/wire-protocol-constants.h"
 #include "Color.h"
+#include "KeyData.h"
+#include "LedData.h"
 
 // See .cpp file for comments regarding appropriate namespaces
 namespace kaleidoscope {
