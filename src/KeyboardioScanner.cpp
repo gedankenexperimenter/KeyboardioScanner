@@ -178,6 +178,19 @@ void KeyboardioScanner::updateLedBank(byte bank) {
 }
 
 
+// An efficient way to set the value of just one LED, without having to update everything
+void KeyboardioScanner::updateLed(byte led, Color color) {
+  byte data[] = {TWI_CMD_LED_SET_ONE_TO,
+                 led,
+                 pgm_read_byte(&gamma8[color.b]),
+                 pgm_read_byte(&gamma8[color.g]),
+                 pgm_read_byte(&gamma8[color.r])
+                };
+  byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
+  led_data_.leds[led] = color;
+}
+
+
 // An efficient way to set all LEDs to the same color at once
 void KeyboardioScanner::updateAllLeds(Color color) {
   byte data[] = {TWI_CMD_LED_SET_ALL_TO,
@@ -190,19 +203,6 @@ void KeyboardioScanner::updateAllLeds(Color color) {
   for (byte led = 0; led < TOTAL_LEDS; ++led) {
     led_data_.leds[led] = color;
   }
-}
-
-
-// An efficient way to set the value of just one LED, without having to update everything
-void KeyboardioScanner::updateLed(byte led, Color color) {
-  byte data[] = {TWI_CMD_LED_SET_ONE_TO,
-                 led,
-                 pgm_read_byte(&gamma8[color.b]),
-                 pgm_read_byte(&gamma8[color.g]),
-                 pgm_read_byte(&gamma8[color.r])
-                };
-  byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
-  led_data_.leds[led] = color;
 }
 
 } // namespace hardware {
