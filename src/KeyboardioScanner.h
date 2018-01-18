@@ -34,9 +34,11 @@ class KeyboardioScanner {
   //byte setLedSpiFrequency(byte frequency);
   //int readLedSpiFrequency();
 
-  // LED functions
+  // interface to LED color array
   Color getLedColor(byte i);
-  void setLedColor(byte i, Color color);
+  void  setLedColor(byte i, Color color);
+
+  // send message to controller to change physical LEDs
   void updateNextLedBank();
   void updateLed(byte led, Color color);
   void updateAllLeds(Color color);
