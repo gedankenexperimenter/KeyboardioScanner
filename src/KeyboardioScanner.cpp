@@ -48,12 +48,6 @@ KeyboardioScanner::KeyboardioScanner(byte ad01) {
 }
 
 
-// Returns the relative controller addresss. The expected range is 0-3
-byte KeyboardioScanner::controllerAddress() {
-  return ad01;
-}
-
-
 // Sets the keyscan interval. We currently do three reads.
 // before declaring a key event debounced.
 //
@@ -111,41 +105,43 @@ byte KeyboardioScanner::setKeyscanInterval(byte delay) {
 // }
 
 
-// I think this is getting data from keyswitches?
-int KeyboardioScanner::readRegister(byte cmd) {
-  byte return_value = 0;
+// // This is called from other unused(?) functions
+// int KeyboardioScanner::readRegister(byte cmd) {
+//   byte return_value = 0;
 
-  byte data[] = {cmd};
-  byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
+//   byte data[] = {cmd};
+//   byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
 
-  delayMicroseconds(15); // We may be able to drop this in the future
-  // but will need to verify with correctly
-  // sized pull-ups on both the left and right
-  // hands' i2c SDA and SCL lines
+//   delayMicroseconds(15); // We may be able to drop this in the future
+//   // but will need to verify with correctly
+//   // sized pull-ups on both the left and right
+//   // hands' i2c SDA and SCL lines
 
-  byte rx_buffer[1];
+//   byte rx_buffer[1];
 
-  // perform blocking read into buffer
-  byte read = twi_readFrom(addr_, rx_buffer, ELEMENTS(rx_buffer), true);
-  if (read > 0) {
-    return rx_buffer[0];
-  } else {
-    return -1;
-  }
-}
+//   // perform blocking read into buffer
+//   byte read = twi_readFrom(addr_, rx_buffer, ELEMENTS(rx_buffer), true);
+//   if (read > 0) {
+//     return rx_buffer[0];
+//   } else {
+//     return -1;
+//   }
+// }
 
 
-// gives information on the key that was just pressed or released.
-bool KeyboardioScanner::readKeys() {
+// This function should just return a KeyData object, and not bother storing it as a
+// member of the Scanner object. This reference parameter needs testing to see if it works
+// as I expect.
+bool KeyboardioScanner::readKeys(KeyData& key_data) {
   byte rx_buffer[5];
 
   // perform blocking read into buffer
   byte read = twi_readFrom(addr_, rx_buffer, ELEMENTS(rx_buffer), true);
   if (rx_buffer[0] == TWI_REPLY_KEYDATA) {
-    key_data_.rows[0] = rx_buffer[1];
-    key_data_.rows[1] = rx_buffer[2];
-    key_data_.rows[2] = rx_buffer[3];
-    key_data_.rows[3] = rx_buffer[4];
+    key_data.rows[0] = rx_buffer[1];
+    key_data.rows[1] = rx_buffer[2];
+    key_data.rows[2] = rx_buffer[3];
+    key_data.rows[3] = rx_buffer[4];
     return true;
   } else {
     return false;
@@ -185,7 +181,7 @@ void KeyboardioScanner::updateLedBank(byte bank) {
   byte data[LED_BYTES_PER_BANK + 1];
   data[0] = TWI_CMD_LED_BASE + bank;
   for (byte i = 0 ; i < LED_BYTES_PER_BANK; i++) {
-    data[i + 1] = pgm_read_byte(&gamma8[led_data_.bytes[bank][i]]);
+    data[i + 1] = pgm_read_byte(&gamma8[led_data_.banks[bank][i]]);
   }
   byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
   bitClear(led_banks_changed_, bank);

@@ -43,18 +43,13 @@ class KeyboardioScanner {
   void updateLed(byte led, Color color);
   void updateAllLeds(Color color);
 
-  KeyData getKeyData() {
-    return key_data_;
-  }
-  bool readKeys();
-  byte controllerAddress();
+  bool scanKeys();
 
  private:
   int addr_;
   int ad01_;
 
-  KeyData key_data_;
-  int readRegister(byte cmd);
+  //int readRegister(byte cmd);
 
   LedData led_data_;
   byte next_led_bank_ = 0;
