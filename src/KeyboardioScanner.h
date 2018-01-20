@@ -5,20 +5,11 @@
 #include <Arduino.h>
 #include "twi/wire-protocol-constants.h"
 #include "Color.h"
-#include "KeyData.h"
-#include "LedData.h"
 
 // See .cpp file for comments regarding appropriate namespaces
 namespace kaleidoscope {
-namespace hardware {
+namespace model01 {
 
-// I want to rewrite the whole system of LED control; it's ugly
-#define LED_BANKS 4
-#define LEDS_PER_HAND 32
-#define LEDS_PER_BANK (LEDS_PER_HAND / LED_BANKS)
-#define LED_BYTES_PER_BANK sizeof(Color)  * LEDS_PER_HAND/LED_BANKS
-
-// config options
 
 // used to configure interrupts, configuration for a particular controller
 class KeyboardioScanner {
@@ -40,6 +31,7 @@ class KeyboardioScanner {
 
   // send message to controller to change physical LEDs
   void updateNextLedBank();
+
   void updateLed(byte led, Color color);
   void updateAllLeds(Color color);
 
@@ -51,11 +43,28 @@ class KeyboardioScanner {
 
   //int readRegister(byte cmd);
 
-  LedData led_data_;
-  byte next_led_bank_ = 0;
-  byte led_banks_changed_ = 0;
-  void updateLedBank(byte bank);
-};
+  // These constants might be wasting some space vs #define
+  static constexpr byte total_leds_         = 32;  // per controller
+  static constexpr byte leds_per_bank_      = 8;   // CHAR_BIT
+  static constexpr byte led_banks_          = TOTAL_LEDS / LEDS_PER_BANK;
+  static constexpr byte led_bytes_per_bank_ = LEDS_PER_BANK * sizeof(Color);
 
-} // namespace hardware {
+  // This union stores the (pending) color data for all the LEDs controlled by this
+  // scanner/controller
+  union {
+    Color leds[leds_per_hand_];
+    byte banks[led_banks_][led_bytes_per_bank_];
+  } led_states_;
+
+  // the next LED bank that will be updated by updateLedBank()
+  byte next_led_bank_ = 0;
+
+  // bitfield storing which LED banks need an update
+  byte led_banks_changed_ = 0;
+
+  void updateLedBank(byte bank);
+
+}; // class KeyboardioScanner {
+
+} // namespace model01 {
 } // namespace kaleidoscope {

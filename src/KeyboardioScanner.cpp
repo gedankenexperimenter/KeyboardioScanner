@@ -151,13 +151,13 @@ bool KeyboardioScanner::readKeys(KeyData& key_data) {
 
 Color getLedColor(byte led) {
   //assert(led < LEDS_PER_HAND);
-  return led_data_.leds[led];
+  return led_states_.leds[led];
 }
 
 void setLedColor(byte led, Color color) {
   //assert(led < LEDS_PER_HAND);
-  if (led_data_.leds[led] != color) {
-    led_data_.leds[led] = color;
+  if (led_states_.leds[led] != color) {
+    led_states_.leds[led] = color;
     byte bank = led / LEDS_PER_BANK;
     bitSet(led_banks_changed_, bank);
   }
@@ -181,7 +181,7 @@ void KeyboardioScanner::updateLedBank(byte bank) {
   byte data[LED_BYTES_PER_BANK + 1];
   data[0] = TWI_CMD_LED_BASE + bank;
   for (byte i = 0 ; i < LED_BYTES_PER_BANK; i++) {
-    data[i + 1] = pgm_read_byte(&gamma8[led_data_.banks[bank][i]]);
+    data[i + 1] = pgm_read_byte(&gamma8[led_states_.banks[bank][i]]);
   }
   byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
   bitClear(led_banks_changed_, bank);
@@ -197,7 +197,7 @@ void KeyboardioScanner::updateLed(byte led, Color color) {
                  pgm_read_byte(&gamma8[color.r])
                 };
   byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
-  led_data_.leds[led] = color;
+  led_states_.leds[led] = color;
 }
 
 
@@ -209,9 +209,9 @@ void KeyboardioScanner::updateAllLeds(Color color) {
                  pgm_read_byte(&gamma8[color.r])
                 };
   byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
-  // we should set all the values of led_data_ here
+  // we should set all the values of led_states_ here
   for (byte led = 0; led < TOTAL_LEDS; ++led) {
-    led_data_.leds[led] = color;
+    led_states_.leds[led] = color;
   }
   led_banks_changed_ = 0;
 }
