@@ -5,9 +5,9 @@
 namespace kaleidoscope {
 namespace hardware {
 
-union LedData {
+union LedStates {
   Color leds[LEDS_PER_HAND];
-  byte bytes[LED_BANKS][LED_BYTES_PER_BANK];
+  byte banks[LED_BANKS][LED_BYTES_PER_BANK];
 };
 
 } // namespace hardware {
