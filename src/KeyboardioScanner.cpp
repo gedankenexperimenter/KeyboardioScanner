@@ -12,12 +12,14 @@ namespace kaleidoscope {
 namespace hardware {
 
 // Magic constant with no documentation...
-#define SCANNER_I2C_ADDR_BASE 0x58
-#define ELEMENTS(arr)  (sizeof(arr) / sizeof((arr)[0]))
+constexpr byte SCANNER_I2C_ADDR_BASE = 0x58;
+// Can't figure out a simple way of making this type-safe & constexpr. Since it's confined
+// to this file, it's not that important.
+#define ELEMENTS(array)  (sizeof(array) / sizeof((array)[0]))
 
 uint8_t twi_uninitialized = 1;
 
-// What's this array for?
+// This array translates LED values to corrected values
 const byte PROGMEM gamma8[] = {
   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,
@@ -48,85 +50,28 @@ KeyboardioScanner::KeyboardioScanner(byte ad01) {
 }
 
 
-// Sets the keyscan interval. We currently do three reads.
-// before declaring a key event debounced.
-//
-// Takes an integer value representing a counter.
-//
-// 0 - 0.1-0.25ms
-// 1 - 0.125ms
-// 10 - 0.35ms
-// 25 - 0.8ms
-// 50 - 1.6ms
-// 100 - 3.15ms
-//
-// You should think of this as the _minimum_ keyscan interval.
-// LED updates can cause a bit of jitter.
-//
-// returns the Wire.endTransmission code (0 = success)
-// https://www.arduino.cc/en/Reference/WireEndTransmission
-byte KeyboardioScanner::setKeyscanInterval(byte delay) {
-  byte data[] = {TWI_CMD_KEYSCAN_INTERVAL, delay};
+// This is called from other unused(?) functions
+int KeyboardioScanner::readRegister(byte cmd) {
+  byte return_value = 0;
+
+  byte data[] = {cmd};
   byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
 
-  return result;
+  delayMicroseconds(15); // We may be able to drop this in the future
+  // but will need to verify with correctly
+  // sized pull-ups on both the left and right
+  // hands' i2c SDA and SCL lines
+
+  byte rx_buffer[1];
+
+  // perform blocking read into buffer
+  byte read = twi_readFrom(addr_, rx_buffer, ELEMENTS(rx_buffer), true);
+  if (read > 0) {
+    return rx_buffer[0];
+  } else {
+    return -1;
+  }
 }
-
-
-// These functions seem to be here only for debugging purposes, and can probably be removed
-
-// // returns -1 on error, otherwise returns the scanner version integer
-// int KeyboardioScanner::readVersion() {
-//   return readRegister(TWI_CMD_VERSION);
-// }
-
-// // returns -1 on error, otherwise returns the scanner keyscan interval
-// int KeyboardioScanner::readKeyscanInterval() {
-//   return readRegister(TWI_CMD_KEYSCAN_INTERVAL);
-// }
-
-// // returns -1 on error, otherwise returns the LED SPI Frequncy
-// int KeyboardioScanner::readLedSpiFrequency() {
-//   return readRegister(TWI_CMD_LED_SPI_FREQUENCY);
-// }
-
-// The only thing that uses this right now is the RainbowWave plugin
-
-// // Set the LED SPI Frequency. See wire-protocol-constants.h for
-// // values.
-// //
-// // returns the Wire.endTransmission code (0 = success)
-// // https://www.arduino.cc/en/Reference/WireEndTransmission
-// byte KeyboardioScanner::setLedSpiFrequency(byte frequency) {
-//   byte data[] = {TWI_CMD_LED_SPI_FREQUENCY, frequency};
-//   byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
-
-//   return result;
-// }
-
-
-// // This is called from other unused(?) functions
-// int KeyboardioScanner::readRegister(byte cmd) {
-//   byte return_value = 0;
-
-//   byte data[] = {cmd};
-//   byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
-
-//   delayMicroseconds(15); // We may be able to drop this in the future
-//   // but will need to verify with correctly
-//   // sized pull-ups on both the left and right
-//   // hands' i2c SDA and SCL lines
-
-//   byte rx_buffer[1];
-
-//   // perform blocking read into buffer
-//   byte read = twi_readFrom(addr_, rx_buffer, ELEMENTS(rx_buffer), true);
-//   if (read > 0) {
-//     return rx_buffer[0];
-//   } else {
-//     return -1;
-//   }
-// }
 
 
 // This function should just return a KeyData object, and not bother storing it as a
@@ -214,6 +159,63 @@ void KeyboardioScanner::updateAllLeds(Color color) {
     led_states_.leds[led] = color;
   }
   led_banks_changed_ = 0;
+}
+
+
+// Sets the keyscan interval. We currently do three reads.
+// before declaring a key event debounced.
+//
+// Takes an integer value representing a counter.
+//
+// 0 - 0.1-0.25ms
+// 1 - 0.125ms
+// 10 - 0.35ms
+// 25 - 0.8ms
+// 50 - 1.6ms
+// 100 - 3.15ms
+//
+// You should think of this as the _minimum_ keyscan interval.
+// LED updates can cause a bit of jitter.
+//
+// returns the Wire.endTransmission code (0 = success)
+// https://www.arduino.cc/en/Reference/WireEndTransmission
+byte KeyboardioScanner::setKeyscanInterval(byte delay) {
+  byte data[] = {TWI_CMD_KEYSCAN_INTERVAL, delay};
+  byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
+
+  return result;
+}
+
+
+// These functions seem to be here only for debugging purposes, and can probably be removed
+
+// returns -1 on error, otherwise returns the scanner version integer
+int KeyboardioScanner::readVersion() {
+  return readRegister(TWI_CMD_VERSION);
+}
+
+// returns -1 on error, otherwise returns the scanner keyscan interval
+int KeyboardioScanner::readKeyscanInterval() {
+  return readRegister(TWI_CMD_KEYSCAN_INTERVAL);
+}
+
+// returns -1 on error, otherwise returns the LED SPI Frequncy
+int KeyboardioScanner::readLedSpiFrequency() {
+  return readRegister(TWI_CMD_LED_SPI_FREQUENCY);
+}
+
+// The only thing that uses this right now is the RainbowWave plugin
+
+// Set the LED SPI Frequency. See wire-protocol-constants.h for
+// values.
+//
+// returns the Wire.endTransmission code (0 = success)
+// https://www.arduino.cc/en/Reference/WireEndTransmission
+byte KeyboardioScanner::setLedSpiFrequency(byte frequency) {
+  byte data[] = {TWI_CMD_LED_SPI_FREQUENCY, frequency};
+  byte result = twi_writeTo(addr_, data, ELEMENTS(data), 1, 0);
+
+  return result;
 }
 
 } // namespace hardware {
